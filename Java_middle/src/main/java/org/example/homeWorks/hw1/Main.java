@@ -1,4 +1,4 @@
-package org.example;
+package org.example.homeWorks.hw1;
 
 import lombok.*;
 
