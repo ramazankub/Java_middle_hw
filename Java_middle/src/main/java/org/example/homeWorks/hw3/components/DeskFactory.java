@@ -1,6 +1,5 @@
 package org.example.homeWorks.hw3.components;
 
-import lombok.Builder;
 import lombok.ToString;
 import org.example.homeWorks.hw3.components.enums.ConstructionEnum;
 import org.example.homeWorks.hw3.components.enums.MaterialsEnum;

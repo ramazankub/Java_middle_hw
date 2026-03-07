@@ -1,7 +1,6 @@
 package org.example.homeWorks.hw3.components.interfaces;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Value;
 
 @Builder
