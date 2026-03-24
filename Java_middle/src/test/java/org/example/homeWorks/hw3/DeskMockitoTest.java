@@ -1,4 +1,4 @@
-package hw3;
+package org.example.homeWorks.hw3;
 
 import org.example.homeWorks.hw3.components.Desk;
 import org.example.homeWorks.hw3.components.interfaces.DeskOption;
