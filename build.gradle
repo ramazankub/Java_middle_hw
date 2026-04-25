@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id("io.freefair.lombok") version "9.2.0"
+}
+
+shadowJar {
+    archiveClassifier.set('all')
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+}
+
+tasks.register("printBom") {
+    group = "help"
+    description = "Print resolved testRuntimeClasspath with BOM versions"
+
+    doLast {
+        exec {
+            commandLine "./gradlew", "dependencies", "--configuration", "testRuntimeClasspath"
+        }
+    }
+}
+
+
+
+test {
+    useJUnitPlatform()
+}
