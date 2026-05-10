@@ -16,7 +16,7 @@ public class Desk {
     private int addedPrice;
 
     @Singular
-    List<DeskOption> options = new ArrayList<>();
+    List<DeskOption> options;
 
     public int calculateTotalPrice() {
         int total = 0;
