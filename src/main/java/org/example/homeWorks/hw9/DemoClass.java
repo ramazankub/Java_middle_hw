@@ -1,8 +1,9 @@
-package org.example.homeWorks.hw8;
+package org.example.homeWorks.hw9;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.example.homeWorks.hw9.service.CarServiceWithCache;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +51,8 @@ public class DemoClass {
 
             Random random = new Random();
 
+            int firstCarId = 0;
+
             for (String carName : carNames) {
 
                 Car car = new Car();
@@ -63,22 +66,30 @@ public class DemoClass {
                 }
 
                 em.persist(car);
-                
+
+                if (firstCarId == 0) {
+                    firstCarId = car.getId();
+                }
+
                 if (carName.equals("BMW M3 GTR")) {
                     car.setOwner(protagonist);
                 }
 
-                int maintenanceCount = random.nextInt(3) + 2;
+                int maintenanceCount =
+                        random.nextInt(3) + 2;
 
                 for (int i = 0; i < maintenanceCount; i++) {
 
-                    MaintenanceRecord record = new MaintenanceRecord(
-                            0,
-                            services.get(random.nextInt(services.size())),
-                            random.nextInt(15000) + 1000,
-                            LocalDate.now(),
-                            car
-                    );
+                    MaintenanceRecord record =
+                            new MaintenanceRecord(
+                                    0,
+                                    services.get(
+                                            random.nextInt(services.size())
+                                    ),
+                                    random.nextInt(15000) + 1000,
+                                    LocalDate.now(),
+                                    car
+                            );
 
                     em.persist(record);
 
@@ -89,12 +100,58 @@ public class DemoClass {
                 System.out.println(car);
                 System.out.println("Maintenance history:");
 
-                for (MaintenanceRecord record : car.getMaintenanceRecords()) {
+                for (MaintenanceRecord record :
+                        car.getMaintenanceRecords()) {
+
                     System.out.println(record);
                 }
             }
 
             em.getTransaction().commit();
+
+            // =========================
+            // CACHE TEST
+            // =========================
+
+            CarServiceWithCache cacheService =
+                    new CarServiceWithCache(em);
+
+            long dbStart = System.nanoTime();
+
+            for (int i = 0; i < 10000; i++) {
+                em.find(Car.class, firstCarId);
+            }
+
+            long dbEnd = System.nanoTime();
+
+            long cacheStart = System.nanoTime();
+
+            for (int i = 0; i < 10000; i++) {
+                cacheService.getCarById(firstCarId);
+            }
+
+            long cacheEnd = System.nanoTime();
+
+            System.out.println("\n=========================");
+            System.out.println("PERFORMANCE TEST");
+            System.out.println("=========================");
+
+            System.out.println(
+                    "DB time: "
+                            + (dbEnd - dbStart) / 1_000_000
+                            + " ms"
+            );
+
+            System.out.println(
+                    "Cache time: "
+                            + (cacheEnd - cacheStart) / 1_000_000
+                            + " ms"
+            );
+
+            System.out.println(
+                    "Cache size: "
+                            + cacheService.getCacheSize()
+            );
 
         } catch (Exception e) {
 
